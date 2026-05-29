@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>ecosaeco</h1>
+<p id="cat-desc">Loading category...</p>
+<p>Score: <span id="pts">0</span></p>
+
+<input id="resp" placeholder="Your answer..." onkeydown="if(event.key==='Enter') verificar()">
+<button onclick="verificar()">Verify</button>
+
+<p id="res">Waiting for your answer...</p>
+<p id="usados" style="color: gray; font-size: 13px;"></p>
+
+<script>
+  let listaValida = []
+  let usados = []
+  let puntos = 0
+
+  async function cargarLista() {
+  document.getElementById("res").innerText = "🔍 Fetching lists from Wikipedia..."
+  
+  const fetchLista = async (pagina) => {
+    const url = "https://en.wikipedia.org/w/api.php?action=parse&page=" + pagina + "&prop=wikitext&format=json&origin=*"
+    const res = await fetch(url)
+    const data = await res.json()
+    const texto = data.parse.wikitext["*"]
+    const matches = texto.match(/\[\[([^\]|]+)/g) || []
+    return matches.map(m => m.replace("[[", "").toLowerCase())
+  }
+
+  const listaUS = await fetchLista("List_of_one-hit_wonders_in_the_United_States")
+  const listaUK = await fetchLista("List_of_one-hit_wonders_in_Ireland")
+  
+  listaValida = { us: listaUS, uk: listaUK }
+  
+  const total = new Set([...listaUS, ...listaUK]).size
+  document.getElementById("cat-desc").innerText = "One-hit wonders — " + total + " entries loaded (US + UK)."
+  document.getElementById("res").innerText = "Ready! Name a one-hit wonder."
+}
+
+  cargarLista()
+
+  async function verificar() {
+  const resp = document.getElementById("resp").value.trim()
+  if (!resp) return
+
+  if (usados.map(u => u.toLowerCase()).includes(resp.toLowerCase())) {
+    document.getElementById("res").innerText = "⚠️ Already used that one!"
+    return
+  }
+
+  const enUS = listaValida.us.some(item => item.includes(resp.toLowerCase()))
+  const enUK = listaValida.uk.some(item => item.includes(resp.toLowerCase()))
+
+  if (enUS || enUK) {
+    usados.push(resp)
+    puntos++
+    document.getElementById("pts").innerText = puntos
+    document.getElementById("usados").innerText = "Used: " + usados.join(", ")
+    
+    let donde = ""
+    if (enUS && enUK) donde = "🌎🌍 One-hit wonder on both sides of the Atlantic!"
+    else if (enUS) donde = "🌎 One-hit wonder in the US only."
+    else donde = "🌍 One-hit wonder in the UK only."
+    
+    document.getElementById("res").innerText = "✅ Valid! " + donde
+    document.getElementById("resp").value = ""
+  } else {
+    document.getElementById("res").innerText = "❌ Not on either list."
+  }
+}
+</script>
+</body>
+</html>
