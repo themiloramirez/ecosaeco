@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ecosaeco</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .container { width: 100%; max-width: 560px; }
+    h1 { font-size: 26px; font-weight: 500; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
+    .cat-btn {
+      width: 100%; padding: 12px 14px;
+      border-radius: 10px; border: 1px solid #2a2a2a;
+      background: #181818; color: #e8e8e8;
+      cursor: pointer; font-size: 13px; text-align: left;
+      display: block; margin-bottom: 8px;
+      transition: background 0.15s;
+    }
+    .cat-btn:hover { background: #222; }
+    .badge {
+      float: right; font-size: 11px;
+      background: #1a2a3a; color: #6ab0f5;
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .game-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+    .game-title { font-size: 18px; font-weight: 500; }
+    .score-num { font-size: 28px; font-weight: 500; text-align: right; }
+    .score-label { font-size: 11px; color: #888; text-align: right; }
+    .game-desc { font-size: 12px; color: #888; margin-bottom: 1rem; }
+    .input-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+    input {
+      flex: 1; padding: 10px 14px;
+      background: #181818; border: 1px solid #2a2a2a;
+      border-radius: 10px; color: #e8e8e8; font-size: 14px;
+      outline: none;
+    }
+    input:focus { border-color: #444; }
+    input:disabled { opacity: 0.5; }
+    button {
+      padding: 10px 16px; border-radius: 10px;
+      border: 1px solid #2a2a2a; background: #222;
+      color: #e8e8e8; cursor: pointer; font-size: 13px;
+      white-space: nowrap;
+    }
+    button:hover { background: #2a2a2a; }
+    button:disabled { opacity: 0.5; cursor: default; }
+    .back-btn { color: #888; font-size: 12px; }
+    .result-box {
+      min-height: 56px; background: #181818;
+      border-radius: 10px; padding: 12px 16px; margin-bottom: 1rem;
+    }
+    #res { font-size: 14px; color: #888; }
+    #res2 { font-size: 12px; color: #888; margin-top: 4px; display: none; }
+    .used-label { font-size: 12px; color: #888; margin-bottom: 6px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      padding: 3px 10px; border-radius: 20px; font-size: 12px;
+    }
+    .tag-ok { background: #0f2a1a; color: #4ade80; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div id="screen-select">
+    <h1>ecosaeco</h1>
+    <p class="subtitle">Choose a category and name as many members as you can</p>
+    <div id="cat-grid"></div>
+  </div>
+
+  <div id="screen-game" class="hidden">
+    <div class="game-header">
+      <p class="game-title" id="game-title"></p>
+      <div>
+        <p class="score-num" id="pts">0</p>
+        <p class="score-label">points</p>
+      </div>
+    </div>
+    <p class="game-desc" id="game-desc"></p>
+    <div class="input-row">
+      <input id="resp" placeholder="Your answer..." onkeydown="if(event.key==='Enter')verificar()"/>
+      <button onclick="verificar()" id="btn">Check</button>
+      <button class="back-btn" onclick="resetGame()">↩ Back</button>
+    </div>
+    <div class="result-box">
+      <p id="res">Start naming...</p>
+      <p id="res2"></p>
+    </div>
+    <div id="usados-box" class="hidden">
+      <p class="used-label" id="used-label">Used (0):</p>
+      <div class="tags" id="usados"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CATEGORIES = [
+{
+  id:"capitals", name:"World capitals", badge:"",
+  desc:"Name any capital city in the world — some countries have more than one!",
+  list:new Set(["kabul","tirana","algiers","andorra la vella","luanda","buenos aires","yerevan","canberra","vienna","baku","nassau","manama","dhaka","bridgetown","minsk","brussels","belmopan","porto-novo","thimphu","sucre","la paz","sarajevo","gaborone","brasilia","bandar seri begawan","sofia","ouagadougou","naypyidaw","bujumbura","phnom penh","yaounde","ottawa","praia","bangui","ndjamena","santiago","beijing","bogota","moroni","kinshasa","brazzaville","san jose","zagreb","havana","nicosia","prague","copenhagen","djibouti","roseau","santo domingo","dili","quito","cairo","san salvador","malabo","asmara","tallinn","mbabane","lobamba","addis ababa","suva","helsinki","paris","libreville","banjul","tbilisi","berlin","accra","athens","nuuk","st georges","guatemala city","conakry","bissau","georgetown","port-au-prince","tegucigalpa","budapest","reykjavik","new delhi","jakarta","tehran","baghdad","dublin","jerusalem","rome","kingston","tokyo","amman","astana","nairobi","tarawa","pyongyang","seoul","pristina","kuwait city","bishkek","vientiane","riga","beirut","maseru","monrovia","tripoli","vaduz","vilnius","luxembourg","skopje","antananarivo","lilongwe","kuala lumpur","putrajaya","male","bamako","valletta","majuro","nouakchott","port louis","mexico city","palikir","chisinau","monaco","ulaanbaatar","ulan bator","ulan-bator","podgorica","rabat","maputo","windhoek","kathmandu","amsterdam","the hague","wellington","managua","niamey","abuja","oslo","muscat","islamabad","ngerulmud","panama city","port moresby","asuncion","lima","manila","warsaw","lisbon","bucharest","moscow","kigali","basseterre","castries","kingstown","apia","san marino","sao tome","riyadh","dakar","belgrade","victoria","freetown","singapore","bratislava","ljubljana","honiara","mogadishu","pretoria","cape town","bloemfontein","juba","madrid","colombo","sri jayawardenepura kotte","khartoum","paramaribo","stockholm","bern","damascus","taipei","dushanbe","dodoma","dar es salaam","bangkok","lome","nukualofa","port of spain","tunis","ankara","ashgabat","funafuti","kampala","kyiv","abu dhabi","london","washington dc","montevideo","tashkent","port vila","vatican city","caracas","hanoi","sanaa","lusaka","harare","yamoussoukro","abidjan"])
+},
+{
+  id:"southern", name:"Countries entirely in the Southern Hemisphere", badge:"tricky",
+  desc:"Every part of the country must lie south of the equator. No partial credit!",
+  list:new Set(["angola","argentina","australia","bolivia","botswana","burundi","chile","comoros","eswatini","fiji","lesotho","madagascar","malawi","mauritius","mozambique","namibia","new zealand","paraguay","peru","rwanda","seychelles","solomon islands","south africa","tanzania","timor-leste","east timor","tonga","uruguay","vanuatu","zambia","zimbabwe","papua new guinea","samoa","tuvalu","nauru"]),
+  notValid:new Set(["brazil","kenya","indonesia","colombia","ecuador","gabon","cameroon","nigeria","ethiopia","somalia","democratic republic of the congo","congo","india","malaysia","maldives","singapore","philippines","ghana","senegal","guinea","sierra leone","liberia","cote divoire","ivory coast","burkina faso","mali","niger","chad","sudan","south sudan"]),
+  notValidReasons:{"brazil":"Brazil's northernmost tip crosses the equator.","kenya":"Kenya straddles the equator.","indonesia":"Indonesia spans both hemispheres.","colombia":"Colombia extends north of the equator.","ecuador":"Ecuador sits right on the equator — its name means exactly that.","gabon":"Gabon crosses the equator.","maldives":"The Maldives straddles the equator.","somalia":"Somalia's northern tip is above the equator."}
+},
+{
+  id:"oscars", name:"Best Picture Oscar winners", badge:"",
+  desc:"Name any film that won the Academy Award for Best Picture — full title required",
+  list:new Set(["wings","broadway melody","all quiet on the western front","cimarron","grand hotel","cavalcade","it happened one night","mutiny on the bounty","great ziegfeld","life of emile zola","you cant take it with you","gone with the wind","rebecca","how green was my valley","mrs miniver","casablanca","going my way","lost weekend","best years of our lives","gentlemens agreement","hamlet","all the kings men","all about eve","american in paris","greatest show on earth","from here to eternity","on the waterfront","marty","around the world in 80 days","bridge on the river kwai","gigi","ben-hur","apartment","west side story","lawrence of arabia","tom jones","my fair lady","sound of music","man for all seasons","in the heat of the night","oliver","midnight cowboy","patton","french connection","godfather","sting","godfather part ii","one flew over the cuckoos nest","rocky","annie hall","deer hunter","kramer vs kramer","ordinary people","chariots of fire","gandhi","terms of endearment","amadeus","out of africa","platoon","last emperor","rain man","driving miss daisy","dances with wolves","silence of the lambs","unforgiven","schindlers list","forrest gump","braveheart","english patient","titanic","shakespeare in love","american beauty","gladiator","beautiful mind","chicago","lord of the rings the return of the king","million dollar baby","crash","departed","no country for old men","slumdog millionaire","hurt locker","kings speech","artist","argo","12 years a slave","birdman","spotlight","moonlight","shape of water","green book","parasite","nomadland","coda","everything everywhere all at once","zone of interest","oppenheimer","anora"])
+},
+{
+  id:"primes", name:"Prime numbers up to 100", badge:"tautological",
+  desc:"Name any prime number between 2 and 97",
+  list:new Set(["2","3","5","7","11","13","17","19","23","29","31","37","41","43","47","53","59","61","67","71","73","79","83","89","97"])
+},
+{
+  id:"defunct", name:"Countries that no longer exist", badge:"open-ended",
+  desc:"Name a country that was once sovereign but is now gone",
+  facts:{
+    "soviet union":"Dissolved in 1991 into 15 independent republics.",
+    "ussr":"Dissolved in 1991 into 15 independent republics.",
+    "yugoslavia":"Broke apart 1991–1992 into Slovenia, Croatia, Bosnia, Serbia, Montenegro, North Macedonia, and later Kosovo.",
+    "czechoslovakia":"Peacefully split in 1993 into Czech Republic and Slovakia — the Velvet Divorce.",
+    "east germany":"Reunified with West Germany in 1990.",
+    "west germany":"Reunified with East Germany in 1990.",
+    "german democratic republic":"The official name of East Germany; reunified in 1990.",
+    "ottoman empire":"Collapsed after WWI, giving rise to modern Turkey and many Middle Eastern states.",
+    "austro-hungarian empire":"Dissolved after WWI into Austria, Hungary, Czechoslovakia, Yugoslavia and more.",
+    "austria-hungary":"Dissolved after WWI into Austria, Hungary, Czechoslovakia, Yugoslavia and more.",
+    "persian empire":"Conquered by Alexander the Great in 330 BC.",
+    "byzantine empire":"Fell in 1453 when Constantinople was taken by the Ottomans.",
+    "eastern roman empire":"The Byzantine Empire; fell in 1453.",
+    "roman empire":"Fell in 476 AD in the West; the Eastern half survived as Byzantium until 1453.",
+    "western roman empire":"Fell in 476 AD; the last emperor Romulus Augustulus was deposed.",
+    "holy roman empire":"Dissolved in 1806 when Napoleon forced Francis II to abdicate.",
+    "prussia":"Formally abolished by the Allied Control Council in 1947.",
+    "south vietnam":"Fell to North Vietnam in 1975; unified as the Socialist Republic of Vietnam.",
+    "north vietnam":"Unified with South Vietnam in 1975.",
+    "south yemen":"Unified with North Yemen in 1990.",
+    "north yemen":"Unified with South Yemen in 1990.",
+    "confederate states of america":"Defeated in the US Civil War, 1865.",
+    "confederacy":"Defeated in the US Civil War, 1865.",
+    "ceylon":"Renamed Sri Lanka in 1972.",
+    "rhodesia":"Became Zimbabwe in 1980 after a long independence struggle.",
+    "south rhodesia":"Became Zimbabwe in 1980.",
+    "gold coast":"Became Ghana in 1957, the first sub-Saharan country to gain independence.",
+    "abyssinia":"Renamed Ethiopia; Italian occupation 1936–1941.",
+    "persia":"Renamed Iran in 1935 by Reza Shah Pahlavi.",
+    "mesopotamia":"Ancient region; now modern Iraq.",
+    "gran colombia":"Simón Bolívar's republic dissolved in 1831 into Colombia, Venezuela, and Ecuador.",
+    "republic of texas":"Annexed by the United States in 1845.",
+    "burma":"Renamed Myanmar by the military government in 1989.",
+    "belgian congo":"Became the Democratic Republic of Congo in 1960.",
+    "biafra":"Attempted secession from Nigeria 1967–1970; reintegrated after civil war.",
+    "manchuria":"Japanese-dominated region; Manchukuo puppet state dissolved 1945.",
+    "manchukuo":"Japanese puppet state in northeast China; dissolved 1945.",
+    "tanganyika":"Merged with Zanzibar in 1964 to form Tanzania.",
+    "zanzibar":"Merged with Tanganyika in 1964 to form Tanzania.",
+    "nyasaland":"Became Malawi in 1964.",
+    "northern rhodesia":"Became Zambia in 1964.",
+    "bechuanaland":"Became Botswana in 1966.",
+    "basutoland":"Became Lesotho in 1966.",
+    "dahomey":"Renamed Benin in 1975.",
+    "upper volta":"Renamed Burkina Faso in 1984.",
+    "bophuthatswana":"South African apartheid-era Bantustan; reintegrated in 1994.",
+    "transkei":"South African apartheid-era Bantustan; reintegrated in 1994.",
+    "venda":"South African apartheid-era Bantustan; reintegrated in 1994.",
+    "ciskei":"South African apartheid-era Bantustan; reintegrated in 1994.",
+    "sikkim":"Merged with India in 1975 after a referendum.",
+    "sumer":"Ancient civilization in southern Mesopotamia; absorbed into the Akkadian Empire around 2334 BC.",
+    "akkad":"Ancient empire; collapsed around 2154 BC.",
+    "babylon":"Ancient Mesopotamian kingdom; fell to Persia in 539 BC.",
+    "assyria":"Ancient empire; fell in 612 BC when Nineveh was sacked.",
+    "carthage":"North African city-state; destroyed by Rome in 146 BC after the Third Punic War.",
+    "phoenicia":"Ancient Levantine civilization; absorbed into the Macedonian Empire after 332 BC.",
+    "nubia":"Ancient African kingdom; gradually absorbed into surrounding states.",
+    "kush":"Ancient Nubian kingdom; declined around 350 AD.",
+    "dutch east indies":"Became Indonesia in 1945.",
+    "portuguese east africa":"Became Mozambique in 1975.",
+    "french indochina":"Dissolved into Vietnam, Laos, and Cambodia in 1954.",
+    "french west africa":"Dissolved into eight independent nations in 1960.",
+    "italian east africa":"Italian colonial federation; dissolved after WWII.",
+    "new hebrides":"Became Vanuatu in 1980.",
+    "gilbert islands":"Became Kiribati in 1979.",
+    "ellice islands":"Became Tuvalu in 1978.",
+    "tannu tuva":"Absorbed into the Soviet Union in 1944; now a republic within Russia.",
+    "republic of china":"Retreated to Taiwan in 1949; the mainland became the People's Republic of China.",
+    "weimar republic":"German republic 1919–1933; ended when Hitler became chancellor.",
+    "third reich":"Nazi Germany; collapsed in 1945.",
+    "nazi germany":"Collapsed in May 1945 with Germany's unconditional surrender.",
+    "habsburg empire":"The Austrian Empire; transformed and eventually dissolved after WWI.",
+    "mughal empire":"Declined through the 18th century; formally ended by the British in 1858.",
+    "british raj":"British rule over India; ended with independence in 1947.",
+    "imperial japan":"Japan's imperial expansion ended with WWII surrender in 1945.",
+    "republic of venice":"Absorbed by Napoleon in 1797 after over 1,000 years.",
+    "venetian republic":"Absorbed by Napoleon in 1797.",
+    "papal states":"The Pope's territorial kingdom; ended when Rome was annexed by Italy in 1870.",
+    "kingdom of hawaii":"Overthrown in 1893; Hawaii became a US state in 1959.",
+    "zulu kingdom":"Defeated by the British in 1879; absorbed into South Africa.",
+    "mali empire":"Declined in the 15th century; one of the great medieval African empires.",
+    "songhai empire":"Fell to Moroccan invasion in 1591.",
+    "mongol empire":"The largest contiguous land empire in history; fragmented in the 14th century.",
+    "safavid empire":"Persian empire; collapsed in 1736.",
+    "umayyad caliphate":"First great Islamic dynasty; overthrown by the Abbasids in 750 AD.",
+    "abbasid caliphate":"Islamic golden age empire; ended when Mongols sacked Baghdad in 1258.",
+    "carolingian empire":"Charlemagne's empire; divided in 843 into what became France, Germany, and Italy.",
+    "frankish empire":"Charlemagne's empire; divided by the Treaty of Verdun in 843.",
+    "lydia":"Ancient kingdom in Anatolia; conquered by Persia in 547 BC.",
+    "media":"Ancient Iranian empire; conquered by Cyrus the Great in 550 BC.",
+    "akkadian empire":"First empire in history; collapsed around 2154 BC.",
+    "republic of south moluccas":"Short-lived Indonesian independence movement; dissolved 1950.",
+    "byelorussian ssr":"Soviet republic; became independent Belarus in 1991.",
+    "ukrainian ssr":"Soviet republic; became independent Ukraine in 1991.",
+    "georgian ssr":"Soviet republic; became independent Georgia in 1991.",
+    "chechen republic of ichkeria":"Unrecognized Chechen state; de facto ended after Second Chechen War.",
+    "german empire":"The Kaiserreich; ended with WWI defeat in 1918.",
+    "austro-hungarian empire":"Dissolved after WWI.",
+    "kingdom of serbs croats and slovenes":"Renamed Yugoslavia in 1929.",
+    "federation of rhodesia and nyasaland":"Central African Federation; dissolved in 1963.",
+  }
+}
+]
+
+let currentCat=null, usados=new Set(), puntos=0
+
+function norm(str){
+  return str.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/^the\s+/,"")
+    .replace(/[^a-z0-9\s]/g,"")
+    .replace(/\s+/g," ").trim()
+}
+
+function buildGrid(){
+  const grid=document.getElementById("cat-grid")
+  CATEGORIES.forEach(cat=>{
+    const btn=document.createElement("button")
+    btn.className="cat-btn"
+    const badge=cat.badge?`<span class="badge">${cat.badge}</span>`:""
+    btn.innerHTML=`${cat.name}${badge}`
+    btn.onclick=()=>startGame(cat)
+    grid.appendChild(btn)
+  })
+}
+
+function startGame(cat){
+  currentCat=cat; usados=new Set(); puntos=0
+  document.getElementById("pts").innerText="0"
+  document.getElementById("game-title").innerText=cat.name
+  document.getElementById("game-desc").innerText=cat.desc
+  document.getElementById("usados").innerHTML=""
+  document.getElementById("usados-box").classList.add("hidden")
+  document.getElementById("used-label").innerText="Used (0):"
+  setRes("Start naming...","#888",null)
+  document.getElementById("screen-select").classList.add("hidden")
+  document.getElementById("screen-game").classList.remove("hidden")
+  document.getElementById("resp").value=""
+  document.getElementById("resp").focus()
+}
+
+function resetGame(){
+  document.getElementById("screen-game").classList.add("hidden")
+  document.getElementById("screen-select").classList.remove("hidden")
+}
+
+function setRes(main,color,sub){
+  const r=document.getElementById("res")
+  r.innerText=main; r.style.color=color
+  const r2=document.getElementById("res2")
+  if(sub){r2.innerText=sub;r2.style.display="block"}
+  else{r2.style.display="none"}
+}
+
+function verificar(){
+  const input=document.getElementById("resp").value.trim()
+  if(!input)return
+  const n=norm(input)
+  if(!n)return
+  if(usados.has(n)){setRes("Already used that one!","#d97706",null);return}
+
+  if(currentCat.id==="defunct"){
+    const fact=currentCat.facts[n]
+    if(fact){accept(input,n,fact)}
+    else{setRes("Not recognized — try another name or spelling.","#ef4444",null)}
+    return
+  }
+
+  if(currentCat.id==="southern"){
+    if(currentCat.notValid.has(n)){
+      const reason=currentCat.notValidReasons[n]||"Part of this country lies in or above the Northern Hemisphere."
+      setRes("Not entirely southern!","#ef4444",reason)
+      return
+    }
+  }
+
+  if(currentCat.list.has(n)){accept(input,n,null);return}
+  setRes("Not found. Check spelling, or try the full name.","#ef4444",null)
+}
+
+function accept(input,n,reason){
+  usados.add(n); puntos++
+  document.getElementById("pts").innerText=puntos
+  document.getElementById("resp").value=""
+  setRes("Valid!","#4ade80",reason||null)
+  const tag=document.createElement("span")
+  tag.className="tag tag-ok"
+  tag.innerText=input
+  document.getElementById("usados").appendChild(tag)
+  document.getElementById("used-label").innerText="Used ("+puntos+"):"
+  document.getElementById("usados-box").classList.remove("hidden")
+  document.getElementById("resp").focus()
+}
+
+buildGrid()
+</script>
+</body>
+</html>
