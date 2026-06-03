@@ -6,55 +6,37 @@
   <title>ecosaeco</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f0f0f; color: #e8e8e8;
-      min-height: 100vh; display: flex; justify-content: center;
-      padding: 2rem 1rem;
-    }
-    .container { width: 100%; max-width: 560px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; display: flex; justify-content: center; padding: 2rem 1rem; }
+    .container { width: 100%; max-width: 580px; }
     h1 { font-size: 26px; font-weight: 500; margin-bottom: 4px; }
-    .subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
-    .cat-btn {
-      width: 100%; padding: 12px 14px; border-radius: 10px;
-      border: 1px solid #2a2a2a; background: #181818; color: #e8e8e8;
-      cursor: pointer; font-size: 13px; text-align: left;
-      display: block; margin-bottom: 8px; transition: background 0.15s;
-    }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 0.5rem; }
+    .level-header { font-size: 11px; font-weight: 600; color: #555; letter-spacing: 0.08em; text-transform: uppercase; margin: 1.2rem 0 0.5rem; }
+    .cat-btn { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid #2a2a2a; background: #181818; color: #e8e8e8; cursor: pointer; font-size: 13px; text-align: left; display: block; margin-bottom: 7px; transition: background 0.15s; }
     .cat-btn:hover { background: #222; }
+    .cat-btn.beginner { border-color: #1a3a1a; }
     .cat-meta { float: right; display: flex; gap: 6px; align-items: center; }
     .badge { font-size: 11px; background: #1a2a3a; color: #6ab0f5; padding: 2px 8px; border-radius: 20px; }
-    .cat-count { font-size: 11px; color: #555; }
+    .badge-easy { background: #1a3a1a; color: #4ade80; }
+    .cat-count { font-size: 11px; color: #444; }
     .game-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-    .game-title { font-size: 17px; font-weight: 500; max-width: 380px; line-height: 1.3; }
+    .game-title { font-size: 17px; font-weight: 500; max-width: 400px; line-height: 1.3; }
     .score-num { font-size: 28px; font-weight: 500; text-align: right; }
     .score-label { font-size: 11px; color: #888; text-align: right; }
     .progress-line { font-size: 12px; color: #555; margin-bottom: 1rem; }
     .progress-line span { color: #4ade80; }
     .game-desc { font-size: 12px; color: #888; margin-bottom: 1rem; }
     .input-row { display: flex; gap: 8px; margin-bottom: 1rem; }
-    input {
-      flex: 1; padding: 10px 14px; background: #181818;
-      border: 1px solid #2a2a2a; border-radius: 10px;
-      color: #e8e8e8; font-size: 14px; outline: none;
-    }
+    input { flex: 1; padding: 10px 14px; background: #181818; border: 1px solid #2a2a2a; border-radius: 10px; color: #e8e8e8; font-size: 14px; outline: none; }
     input:focus { border-color: #444; }
     input:disabled { opacity: 0.5; }
-    button {
-      padding: 10px 16px; border-radius: 10px; border: 1px solid #2a2a2a;
-      background: #222; color: #e8e8e8; cursor: pointer; font-size: 13px; white-space: nowrap;
-    }
+    button { padding: 10px 16px; border-radius: 10px; border: 1px solid #2a2a2a; background: #222; color: #e8e8e8; cursor: pointer; font-size: 13px; white-space: nowrap; }
     button:hover { background: #2a2a2a; }
-    button:disabled { opacity: 0.5; cursor: default; }
+    button:disabled { opacity: 0.4; cursor: default; }
     .back-btn { color: #888; font-size: 12px; }
-    .result-box {
-      min-height: 64px; background: #181818;
-      border-radius: 10px; padding: 12px 16px; margin-bottom: 1rem;
-    }
+    .result-box { min-height: 64px; background: #181818; border-radius: 10px; padding: 12px 16px; margin-bottom: 1rem; }
     #res { font-size: 14px; color: #888; }
     #res-tip { font-size: 12px; color: #888; margin-top: 4px; display: none; font-style: italic; }
     #res-flavor { font-size: 12px; color: #6ab0f5; margin-top: 6px; display: none; }
-    #res-sub { font-size: 12px; color: #888; margin-top: 4px; display: none; }
     #res-wiki { font-size: 12px; margin-top: 6px; display: none; }
     #res-wiki a { color: #6ab0f5; text-decoration: none; }
     #res-wiki a:hover { text-decoration: underline; }
@@ -67,33 +49,27 @@
 </head>
 <body>
 <div class="container">
-
   <div id="screen-select">
     <h1>ecosaeco</h1>
-    <p class="subtitle">Choose a category and name as many members as you can</p>
+    <p class="subtitle">Name as many members of a category as you can</p>
     <div id="cat-grid"></div>
   </div>
-
   <div id="screen-game" class="hidden">
     <div class="game-header">
       <p class="game-title" id="game-title"></p>
-      <div>
-        <p class="score-num" id="pts">0</p>
-        <p class="score-label">points</p>
-      </div>
+      <div><p class="score-num" id="pts">0</p><p class="score-label">points</p></div>
     </div>
     <p class="progress-line" id="progress-line"></p>
     <p class="game-desc" id="game-desc"></p>
     <div class="input-row">
       <input id="resp" placeholder="Your answer..." onkeydown="if(event.key==='Enter')verificar()"/>
-      <button onclick="verificar()" id="btn">Check</button>
+      <button onclick="verificar()">Check</button>
       <button class="back-btn" onclick="resetGame()">↩ Back</button>
     </div>
     <div class="result-box">
       <p id="res">Start naming...</p>
       <p id="res-tip"></p>
       <p id="res-flavor"></p>
-      <p id="res-sub"></p>
       <p id="res-wiki"></p>
     </div>
     <div id="usados-box" class="hidden">
@@ -101,189 +77,142 @@
       <div class="tags" id="usados"></div>
     </div>
   </div>
-
 </div>
 <script>
-// ─── FRENCH EXPRESSIONS DATA ──────────────────────────────────────────────────
-const FRENCH = {
-  list: new Set([
-    // A
-    "a propos","agent provocateur","aide de camp","ancien regime","art nouveau","au fait","au gratin","au pair","avant garde",
-    // B
-    "beau monde","beaux arts","bete noire","bien pensant","blasé","blase","bon mot","bon vivant","boulevard","bouquet","boutique","brunette",
-    // C
-    "cachet","carte blanche","cause celebre","chaise longue","charge daffaires","chef doeuvre","chic","cinema verite","cliche","comme ci comme ca","connoisseur","cordon bleu","corps de ballet","coup detat","coup de grace","coup de theatre","creme de la creme","crepe","cuisine",
-    // D
-    "debacle","debut","decollete","deja vu","dejà vu","denouement","detente","double entendre",
-    // E
-    "elite","emigre","en masse","en passant","en route","encore","entrepreneur","esprit de corps","etiquette",
-    // F
-    "facade","fait accompli","faux ami","faux pas","faux amis","femme fatale","fiancé","fiance","filet mignon","film noir","fin de siecle","force majeure",
-    // G
-    "genre","gourmet",
-    // H
-    "haute couture","haute cuisine","hors doeuvre","hors doeuvres","hors de combat",
-    // I
-    "idee fixe","impasse",
-    // J
-    "je ne sais quoi","joie de vivre",
-    // L
-    "laissez faire","laissez-faire","liaison","lingerie",
-    // M
-    "macabre","maison","malaise","manque","melee","menage a trois","milieu","mise en scene","mot juste",
-    // N
-    "naive","noblesse oblige","nom de plume","nonchalance","nonchalant","nouveau riche","nouvelle vague",
-    // O
-    "objet dart","objet d art",
-    // P
-    "papier mache","par excellence","passe","petite bourgeoisie","piece de resistance","plat du jour","plateau","pot pourri","potpourri","pret a porter","prestige","protege",
-    // R
-    "raison detre","renaissance","repertoire","resume","revue","roman a clef","ruse",
-    // S
-    "sabotage","sang froid","savoir faire","savoir vivre","silhouette","sobriquet","soiree","souvenir","sous chef","surveillance",
-    // T
-    "tableau vivant","tete a tete","touche","tour de force","trompe loeil",
-    // V
-    "vignette","vis a vis","voila",
-  ]),
-
-  easter: new Set([
-    "cest la vie","c est la vie","tant pis","tant mieux","au contraire","noblesse oblige","lese majeste","lese-majeste","au naturel","force de frappe","je taime","je t aime","au fond","a outrance","n est ce pas","nest ce pas",
-  ]),
-
-  flavors: {
-    "avant garde":"Originally a military term — the troops sent ahead of the main army. Art borrowed it around 1910 and never gave it back.",
-    "bete noire":"Literally 'black beast.' The thing you can't stand, personified as a lurking animal.",
-    "blasé":"From blaser, to cloy or satiate. The perfectly French idea that too much experience produces indifference.",
-    "bon mot":"Literally 'good word.' The French elevated the perfectly timed witticism to an art form.",
-    "carte blanche":"A blank document with only a signature — giving the bearer unlimited authority. Used by Napoleon liberally.",
-    "cause celebre":"Literally 'famous case.' The Dreyfus Affair was the original; the term traveled with the concept.",
-    "chaise longue":"'Long chair' — not chaise lounge, though that's what everyone says. A rare case where the mispronunciation became standard.",
-    "chef doeuvre":"Literally 'masterwork' — the piece a craftsman made to prove they deserved to be called a master.",
-    "cinema verite":"'Cinema truth' — the 1960s French documentary movement that put handheld cameras in the street.",
-    "cliche":"From the sound of a printing press stamp hitting the plate. The word itself is a fossil of industrial reproduction.",
-    "cordon bleu":"'Blue ribbon' — the highest order of French chivalry. Applied to cooking because excellence is excellence.",
-    "coup detat":"'Blow of state' — the sudden seizure of government. France has had enough of them to export the concept.",
-    "coup de grace":"The 'blow of mercy' — the final strike that ends suffering. Used in both literal and figurative executions.",
-    "deja vu":"'Already seen' — the uncanny sensation that the present moment has happened before. Coined by philosopher Émile Boirac in 1876.",
-    "denouement":"The 'unknotting' — the resolution of a plot after its climax. Perfect that French gave us both the knot and its undoing.",
-    "detente":"'Relaxation' — used specifically for the easing of Cold War tensions. Henry Kissinger loved this word.",
-    "double entendre":"A phrase with two meanings, one innocent and one not. Ironically, this exact phrase doesn't exist in modern French.",
-    "elite":"From élire, to elect or choose. The chosen ones, self-selected or otherwise.",
-    "entrepreneur":"From entreprendre, to undertake. The French invented the concept of the person who starts things; Silicon Valley kept the word.",
-    "esprit de corps":"'Spirit of the body' — the shared pride that makes a group more than the sum of its members.",
-    "fait accompli":"'Accomplished fact' — presenting someone with something already done, leaving no room for objection.",
-    "femme fatale":"'Deadly woman' — a concept so French that even the English never tried to translate it.",
-    "film noir":"'Dark film' — the term was invented by French critics watching American crime films of the 1940s. Americans didn't name their own genre.",
-    "fin de siecle":"'End of the century' — the decadent, anxious mood of the 1890s. Every century seems to borrow the phrase.",
-    "force majeure":"'Greater force' — the legal clause that excuses you when God, war, or pandemic interferes with your contract.",
-    "haute couture":"'High sewing' — legally protected in France. Only 15 houses qualify. The rest is just fashion.",
-    "idee fixe":"'Fixed idea' — Berlioz used it in music; psychiatry borrowed it for an obsessive thought that won't leave.",
-    "je ne sais quoi":"'I don't know what' — the untranslatable quality that makes something work without knowing why. The phrase is its own example.",
-    "joie de vivre":"'Joy of living' — the untranslatable exuberance the French are supposed to have and spend their literature questioning.",
-    "laissez faire":"'Let do' — the economic doctrine of non-interference. Adam Smith gave it theory; the French gave it the phrase.",
-    "liaison":"'Bond' or 'link' — in cooking, the agent that binds a sauce. In diplomacy, the officer who connects two forces. In gossip, the affair.",
-    "macabre":"From the medieval 'Dance of Macabre' — the allegorical image of Death leading all ranks of society to the grave.",
-    "malaise":"'Bad ease' — the vague, pervasive discomfort that's not quite illness and not quite sadness. Jimmy Carter gave a famous speech about it.",
-    "melee":"From mesler, to mix — originally a confused hand-to-hand battle. Now any chaotic free-for-all.",
-    "menage a trois":"'Household of three' — the French domesticated the arrangement linguistically if not morally.",
-    "mise en scene":"'Put in scene' — in film theory, everything visible within the frame. Directors live and die by this concept.",
-    "mot juste":"'The right word' — Flaubert's obsession. He would spend days searching for it.",
-    "naive":"From naitre, to be born — the quality of one newly born into the world, without guile or experience.",
-    "noblesse oblige":"'Nobility obliges' — the idea that privilege entails responsibility. Used sincerely and ironically in roughly equal measure.",
-    "nom de plume":"'Pen name' — George Eliot, George Sand, Voltaire, Molière. The French tradition of writing as someone else.",
-    "nonchalant":"From chaloir, to be concerned — nonchalant is literally 'not warmed.' The perfectly cool affect.",
-    "nouveau riche":"'New rich' — the money that hasn't learned to be invisible yet. Old money invented the term.",
-    "nouvelle vague":"'New wave' — Godard, Truffaut, Varda. The 1960s French cinema movement that broke every rule and made them all again.",
-    "objet dart":"'Object of art' — a small decorative artwork. The category that includes everything too beautiful to be furniture.",
-    "par excellence":"'By excellence' — the supreme example of a category. The category-definer.",
-    "piece de resistance":"The 'piece of resistance' — originally the main course, the dish that required the most effort. Now the crowning achievement of anything.",
-    "pot pourri":"'Rotten pot' — originally a mixture of dried flowers and spices. The name is more honest than the product.",
-    "pret a porter":"'Ready to wear' — the democratization of fashion. Below haute couture, above fast fashion.",
-    "raison detre":"'Reason for being' — the justification for one's existence. Sartre would say you have to invent it.",
-    "renaissance":"'Rebirth' — the rediscovery of classical antiquity starting in 14th century Italy. The French named it looking backward.",
-    "roman a clef":"'Novel with a key' — fiction with real people thinly disguised. Primary Colors, à clef.",
-    "sabotage":"From sabot, wooden shoe — workers allegedly threw their shoes into machinery during labor disputes. Disputed etymology, perfect word.",
-    "sang froid":"'Cold blood' — the quality of remaining calm under pressure. The British call it 'keeping a stiff upper lip'; the French make it sound like a superpower.",
-    "savoir faire":"'Knowing how to do' — social grace so deep it's instinct. The opposite of a faux pas.",
-    "silhouette":"Named after Étienne de Silhouette, a notoriously cheap French finance minister. His portraits were cut from black paper to save money.",
-    "soiree":"'Evening' — a social gathering in the evening. The French made the time of day into an institution.",
-    "sous chef":"'Under chef' — the second in command of a kitchen. The person who actually runs everything.",
-    "tableau vivant":"'Living picture' — people arranged to recreate a famous painting or scene. A Victorian parlor game turned performance art.",
-    "tete a tete":"'Head to head' — an intimate conversation between two people. The furniture piece designed for two to sit face to face shares the name.",
-    "touche":"In fencing, the acknowledgment that you've been hit. In argument, the acknowledgment that the other person made a good point.",
-    "tour de force":"'Turn of force' — a feat of strength or skill so impressive it redefines what's possible.",
-    "trompe loeil":"'Deceives the eye' — painting so realistic it creates the illusion of three-dimensional space. The oldest special effect.",
-    "vis a vis":"'Face to face' — now used to mean 'in relation to' or 'compared with.' The spatial metaphor became relational.",
-    "voila":"'See there' — the word that makes any revelation feel inevitable. The magician's punctuation.",
-    "double entendre":"A phrase with two meanings, one of which is usually risqué. The phrase itself doesn't exist in modern French — it was coined by English speakers imitating French sophistication.",
-    "comme ci comme ca":"'Like this, like that' — the universal shrug. The French answer to 'how are you?' when honesty seems excessive.",
-    "faux pas":"'False step' — a social blunder. The French conceptualized the idea that social norms are a floor you can fall through.",
-    "beau monde":"'Beautiful world' — high society, the fashionable world. The people who get written about in columns.",
-    "bon vivant":"'One who lives well' — the person who has turned pleasure into a discipline.",
-    "genre":"From genus — a category or kind. The French gave taxonomy to art and we've been arguing about it ever since.",
-    "impasse":"'No passage' — a dead end, literal or figurative. A negotiation that has run out of road.",
-    "debut":"'Beginning' — from débuter, to lead off. The first public appearance, always fraught.",
-    "prestige":"From praestigiae, juggler's tricks — originally meant illusion or deception. Now means the aura of success. The word knows something.",
-    "surveillance":"'Watching over' — from surveiller. The French gave us the word; Foucault gave us the theory of what it does to us.",
-    "lingerie":"From linge, linen — the category of clothing that took the fabric and made it the thing.",
-  },
-
-  // Easter eggs — valid but don't count toward score
-  easterFlavors: {
-    "cest la vie":"'That's life' — the philosophical shrug. France's national resignation, exported worldwide.",
-    "tant pis":"'So much the worse' — stronger than c'est la vie. The French have a shrug for every occasion.",
-    "au contraire":"'On the contrary' — used in English almost exclusively for comic effect or theatrical disagreement.",
-    "nest ce pas":"'Isn't it so?' — the tag question that turns any statement into an invitation to agree.",
-  }
-}
-
-// ─── ALL CATEGORIES ───────────────────────────────────────────────────────────
-const CAPITALS_LIST = new Set(["kabul","tirana","algiers","andorra la vella","luanda","buenos aires","yerevan","canberra","vienna","baku","nassau","manama","dhaka","bridgetown","minsk","brussels","belmopan","porto-novo","thimphu","sucre","la paz","sarajevo","gaborone","brasilia","bandar seri begawan","sofia","ouagadougou","naypyidaw","bujumbura","phnom penh","yaounde","ottawa","praia","bangui","ndjamena","santiago","beijing","bogota","moroni","kinshasa","brazzaville","san jose","zagreb","havana","nicosia","prague","copenhagen","djibouti","roseau","santo domingo","dili","quito","cairo","san salvador","malabo","asmara","tallinn","mbabane","lobamba","addis ababa","suva","helsinki","paris","libreville","banjul","tbilisi","berlin","accra","athens","nuuk","st georges","guatemala city","conakry","bissau","georgetown","port au prince","tegucigalpa","budapest","reykjavik","new delhi","jakarta","tehran","baghdad","dublin","jerusalem","rome","kingston","tokyo","amman","astana","nairobi","tarawa","pyongyang","seoul","pristina","kuwait city","bishkek","vientiane","riga","beirut","maseru","monrovia","tripoli","vaduz","vilnius","luxembourg","skopje","antananarivo","lilongwe","kuala lumpur","putrajaya","male","bamako","valletta","majuro","nouakchott","port louis","mexico city","palikir","chisinau","monaco","ulaanbaatar","ulan bator","podgorica","rabat","maputo","windhoek","kathmandu","amsterdam","the hague","wellington","managua","niamey","abuja","oslo","muscat","islamabad","ngerulmud","panama city","port moresby","asuncion","lima","manila","warsaw","lisbon","bucharest","moscow","kigali","basseterre","castries","kingstown","apia","san marino","sao tome","riyadh","dakar","belgrade","victoria","freetown","singapore","bratislava","ljubljana","honiara","mogadishu","pretoria","cape town","bloemfontein","juba","madrid","colombo","sri jayawardenepura kotte","khartoum","paramaribo","stockholm","bern","damascus","taipei","dushanbe","dodoma","dar es salaam","bangkok","lome","nukualofa","port of spain","tunis","ankara","ashgabat","funafuti","kampala","kyiv","abu dhabi","london","washington dc","washington","montevideo","tashkent","port vila","vatican city","caracas","hanoi","sanaa","lusaka","harare","yamoussoukro","abidjan"])
-const CAPITALS_TIPS = {"washington":"Washington D.C. — the D.C. stands for District of Columbia, not a state.","ulan bator":"Ulaanbaatar is the modern spelling; Ulan Bator is the older transliteration.","the hague":"Technically the seat of government — Amsterdam is the constitutional capital.","putrajaya":"Malaysia's administrative capital since 1999; Kuala Lumpur remains the cultural and financial hub.","sri jayawardenepura kotte":"One of the longest capital city names in the world.","lobamba":"Eswatini's royal and legislative capital — Mbabane is the administrative one.","bloemfontein":"South Africa's judicial capital. Also J.R.R. Tolkien's birthplace.","cape town":"South Africa's legislative capital, where Parliament sits.","sucre":"Bolivia's constitutional capital. La Paz is the seat of government — two capitals, one country, much debate."}
-const SOUTHERN_LIST = new Set(["angola","argentina","australia","bolivia","botswana","burundi","chile","comoros","eswatini","fiji","lesotho","madagascar","malawi","mauritius","mozambique","namibia","new zealand","paraguay","peru","rwanda","seychelles","solomon islands","south africa","tanzania","timor-leste","east timor","tonga","uruguay","vanuatu","zambia","zimbabwe","papua new guinea","samoa","tuvalu","nauru"])
-const SOUTHERN_NO = new Set(["brazil","kenya","indonesia","colombia","ecuador","gabon","cameroon","nigeria","ethiopia","somalia","democratic republic of the congo","congo","india","malaysia","maldives","singapore","philippines","ghana","senegal","guinea","sierra leone","liberia","cote divoire","ivory coast","burkina faso","mali","niger","chad","sudan","south sudan"])
-const SOUTHERN_REASONS = {"brazil":"Brazil's northernmost tip crosses the equator — so close, yet no.","kenya":"Kenya straddles the equator almost perfectly.","indonesia":"Indonesia spans both hemispheres across thousands of islands.","colombia":"Colombia's territory extends well north of the equator.","ecuador":"Ecuador sits right on the equator — its name means exactly that.","gabon":"Gabon crosses the equator through its center.","maldives":"The Maldives straddles the equator.","somalia":"Somalia's northern Horn extends above the equator."}
-const SOUTHERN_FLAVORS = {"lesotho":"One of only three countries completely surrounded by another — South Africa in this case.","eswatini":"Formerly Swaziland; renamed in 2018 by King Mswati III.","nauru":"The world's smallest republic, and the only country with no official capital city.","tuvalu":"One of the lowest-lying countries on Earth — climate change threatens its very existence.","seychelles":"The only country whose constitution mentions the coco de mer palm.","solomon islands":"Named after the biblical King Solomon by a Spanish explorer who hoped to find gold.","vanuatu":"Home to one of the world's most accessible active volcanoes, Mount Yasur.","comoros":"An archipelago that has experienced more than 20 coups since independence in 1975."}
-const OSCARS_LIST = new Set(["wings","broadway melody","all quiet on the western front","cimarron","grand hotel","cavalcade","it happened one night","mutiny on the bounty","great ziegfeld","life of emile zola","you cant take it with you","gone with the wind","rebecca","how green was my valley","mrs miniver","casablanca","going my way","lost weekend","best years of our lives","gentlemens agreement","hamlet","all the kings men","all about eve","american in paris","greatest show on earth","from here to eternity","on the waterfront","marty","around the world in 80 days","bridge on the river kwai","gigi","ben-hur","apartment","west side story","lawrence of arabia","tom jones","my fair lady","sound of music","man for all seasons","in the heat of the night","oliver","midnight cowboy","patton","french connection","godfather","sting","godfather part ii","one flew over the cuckoos nest","rocky","annie hall","deer hunter","kramer vs kramer","ordinary people","chariots of fire","gandhi","terms of endearment","amadeus","out of africa","platoon","last emperor","rain man","driving miss daisy","dances with wolves","silence of the lambs","unforgiven","schindlers list","forrest gump","braveheart","english patient","titanic","shakespeare in love","american beauty","gladiator","beautiful mind","chicago","lord of the rings the return of the king","million dollar baby","crash","departed","no country for old men","slumdog millionaire","hurt locker","kings speech","artist","argo","12 years a slave","birdman","spotlight","moonlight","shape of water","green book","parasite","nomadland","coda","everything everywhere all at once","zone of interest","oppenheimer","anora"])
-const OSCARS_FLAVORS = {"casablanca":"Shot almost entirely on a studio lot in Burbank. Ingrid Bergman never knew which man her character would choose — the ambiguity was real.","parasite":"First non-English-language film to win Best Picture. Bong Joon-ho: 'Once you overcome the one-inch-tall barrier of subtitles, you will be introduced to so many more amazing films.'","moonlight":"Announced as winner after La La Land had already begun its acceptance speech — possibly the most dramatic Oscar moment ever.","godfather":"Marlon Brando stuffed his cheeks with cotton for the audition. The cat in the opening scene was a stray found on the lot.","silence of the lambs":"One of only three films to win all five major Oscars: Picture, Director, Actor, Actress, Screenplay.","annie hall":"Beat Star Wars for Best Picture in 1977. The universe has never fully recovered.","everything everywhere all at once":"Made for $14.3 million. Won seven Oscars — one of the most celebrated indie wins in Academy history.","anora":"Sean Baker's portrait of a New York sex worker won the Palme d'Or at Cannes before its Oscar.","schindlers list":"Spielberg donated his entire salary to the USC Shoah Foundation, which he then created to archive Holocaust testimonies."}
-const PRIMES_LIST = new Set(["2","3","5","7","11","13","17","19","23","29","31","37","41","43","47","53","59","61","67","71","73","79","83","89","97"])
-const PRIMES_FLAVORS = {"2":"The only even prime — every other even number is divisible by 2, which disqualifies it.","97":"The largest prime under 100. Next one is 101.","89":"A Fibonacci prime — it appears in the Fibonacci sequence: 1,1,2,3,5,8,13,21,34,55,89.","47":"Beloved by Star Trek writers — it appears in almost every episode of The Next Generation onwards. A running joke that became a tradition."}
-const DEFUNCT_FACTS = {"soviet union":"Dissolved in 1991 into 15 independent republics.","ussr":"Dissolved in 1991 into 15 independent republics.","yugoslavia":"Broke apart 1991–1992 into Slovenia, Croatia, Bosnia, Serbia, Montenegro, North Macedonia, and later Kosovo.","czechoslovakia":"Peacefully split in 1993 into Czech Republic and Slovakia — the Velvet Divorce.","east germany":"Reunified with West Germany in 1990.","west germany":"Reunified with East Germany in 1990.","german democratic republic":"The official name of East Germany; reunified in 1990.","ottoman empire":"Collapsed after WWI, giving rise to modern Turkey and many Middle Eastern states.","austro-hungarian empire":"Dissolved after WWI into Austria, Hungary, Czechoslovakia, Yugoslavia and more.","austria-hungary":"Dissolved after WWI into Austria, Hungary, Czechoslovakia, Yugoslavia and more.","persian empire":"Conquered by Alexander the Great in 330 BC.","byzantine empire":"Fell in 1453 when Constantinople was taken by the Ottomans.","eastern roman empire":"The Byzantine Empire; fell in 1453.","roman empire":"Fell in 476 AD in the West; the Eastern half survived as Byzantium until 1453.","western roman empire":"Fell in 476 AD; the last emperor Romulus Augustulus was deposed by a Germanic chieftain named Odoacer.","holy roman empire":"Dissolved in 1806 when Napoleon forced Francis II to abdicate. Voltaire said it was 'neither holy, nor Roman, nor an empire.'","prussia":"Formally abolished by the Allied Control Council in 1947.","south vietnam":"Fell to North Vietnam in 1975; unified as the Socialist Republic of Vietnam.","north vietnam":"Unified with South Vietnam in 1975.","south yemen":"Unified with North Yemen in 1990.","north yemen":"Unified with South Yemen in 1990.","confederate states of america":"Defeated in the US Civil War, 1865.","confederacy":"Defeated in the US Civil War, 1865.","ceylon":"Renamed Sri Lanka in 1972.","rhodesia":"Became Zimbabwe in 1980 after a prolonged independence struggle.","south rhodesia":"Became Zimbabwe in 1980.","gold coast":"Became Ghana in 1957 — the first sub-Saharan African country to gain independence.","abyssinia":"Renamed Ethiopia; occupied by Italy 1936–1941.","persia":"Renamed Iran in 1935 by Reza Shah Pahlavi.","mesopotamia":"Ancient region between the Tigris and Euphrates; now modern Iraq. Cradle of writing, law, and the wheel.","gran colombia":"Simón Bolívar's republic dissolved in 1831 into Colombia, Venezuela, and Ecuador.","republic of texas":"Independent from 1836 to 1846, then annexed by the United States.","burma":"Renamed Myanmar by the military government in 1989.","belgian congo":"Became the Democratic Republic of Congo in 1960.","biafra":"Attempted secession from Nigeria 1967–1970; reintegrated after a brutal civil war.","manchuria":"Dominated by Japan; the puppet state Manchukuo dissolved in 1945.","manchukuo":"Japanese puppet state in northeast China; dissolved 1945 with Japan's defeat.","tanganyika":"Merged with Zanzibar in 1964 to form Tanzania.","zanzibar":"Merged with Tanganyika in 1964 to form Tanzania.","nyasaland":"Became Malawi in 1964.","northern rhodesia":"Became Zambia in 1964.","bechuanaland":"Became Botswana in 1966.","basutoland":"Became Lesotho in 1966.","dahomey":"Renamed Benin in 1975.","upper volta":"Renamed Burkina Faso in 1984 — meaning 'Land of Incorruptible People.'","bophuthatswana":"South African apartheid Bantustan; reintegrated in 1994.","transkei":"South African apartheid Bantustan; reintegrated in 1994.","venda":"South African apartheid Bantustan; reintegrated in 1994.","ciskei":"South African apartheid Bantustan; reintegrated in 1994.","sikkim":"Merged with India in 1975 after a controversial referendum.","sumer":"Ancient civilization in southern Mesopotamia; the first known writing system emerged here around 3200 BC.","akkad":"First empire in history, under Sargon of Akkad; collapsed around 2154 BC.","babylon":"Ancient Mesopotamian kingdom; fell to Cyrus the Great of Persia in 539 BC.","assyria":"Ancient empire; fell in 612 BC when Nineveh was sacked.","carthage":"North African city-state; destroyed by Rome in 146 BC. 'Carthago delenda est.'","phoenicia":"Ancient Levantine civilization that gave the world the alphabet; absorbed by Alexander in 332 BC.","nubia":"Ancient African kingdom along the Nile; a rival and sometimes ruler of Egypt.","kush":"Ancient Nubian kingdom that actually conquered Egypt around 744 BC.","dutch east indies":"Became Indonesia in 1945.","portuguese east africa":"Became Mozambique in 1975.","french indochina":"Dissolved into Vietnam, Laos, and Cambodia in 1954 after Dien Bien Phu.","french west africa":"Dissolved into eight independent nations in 1960.","italian east africa":"Italian colonial federation; dissolved after WWII.","new hebrides":"Became Vanuatu in 1980.","gilbert islands":"Became Kiribati in 1979.","ellice islands":"Became Tuvalu in 1978.","tannu tuva":"Absorbed into the Soviet Union in 1944; now a republic within Russia. Richard Feynman was obsessed with visiting it.","republic of china":"Retreated to Taiwan in 1949; the mainland became the People's Republic of China.","weimar republic":"German republic 1919–1933; ended when Hitler became chancellor.","third reich":"Nazi Germany; collapsed in May 1945.","nazi germany":"Collapsed in May 1945 with Germany's unconditional surrender.","habsburg empire":"Vast dynastic empire; transformed and eventually dissolved after WWI.","mughal empire":"Declined through the 18th century; formally ended by the British in 1858.","british raj":"British rule over India; ended with independence in 1947.","imperial japan":"Japan's expansionist empire; ended with WWII surrender in 1945.","republic of venice":"Absorbed by Napoleon in 1797 after over 1,000 years of independence.","venetian republic":"Absorbed by Napoleon in 1797.","papal states":"The Pope's territorial kingdom in central Italy; ended when Rome was annexed in 1870.","kingdom of hawaii":"Overthrown in 1893 with US involvement; Hawaii became a state in 1959.","zulu kingdom":"Defeated by the British in the Anglo-Zulu War of 1879.","mali empire":"One of the great medieval African empires; Mansa Musa was so wealthy his pilgrimage to Mecca crashed gold markets across the Mediterranean.","songhai empire":"Fell to a Moroccan invasion armed with gunpowder in 1591.","mongol empire":"The largest contiguous land empire in history; at its peak covered 24 million km².","safavid empire":"Persian Shia empire; collapsed in 1736.","umayyad caliphate":"First great Islamic dynasty; at its peak stretched from Spain to Central Asia.","abbasid caliphate":"Islamic golden age; ended when Mongols sacked Baghdad in 1258.","carolingian empire":"Charlemagne's empire; divided in 843 by the Treaty of Verdun into what became France, Germany, and Italy.","frankish empire":"Charlemagne's empire; divided by the Treaty of Verdun in 843.","german empire":"The Kaiserreich; ended with WWI defeat and abdication of Wilhelm II in 1918.","kingdom of serbs croats and slovenes":"Renamed Yugoslavia in 1929 by King Alexander I.","federation of rhodesia and nyasaland":"The Central African Federation; dissolved in 1963.","media":"Ancient Iranian empire; conquered by Cyrus the Great in 550 BC.","lydia":"Ancient kingdom in Anatolia; possibly the first civilization to use coined money."}
-
 const CATEGORIES = [
-  { id:"capitals", name:"World capitals", badge:"", desc:"Name any capital city in the world — some countries have more than one!", total: CAPITALS_LIST.size },
-  { id:"southern", name:"Countries entirely in the Southern Hemisphere", badge:"tricky", desc:"Every part of the country must lie south of the equator. No partial credit!", total: SOUTHERN_LIST.size },
-  { id:"oscars", name:"Best Picture Oscar winners", badge:"", desc:"Name any film that won the Academy Award for Best Picture — full title required", total: OSCARS_LIST.size },
-  { id:"primes", name:"Prime numbers up to 100", badge:"tautological", desc:"Name any prime number between 2 and 97", total: PRIMES_LIST.size },
-  { id:"defunct", name:"Countries that no longer exist", badge:"open-ended", desc:"Name a country that was once sovereign but is now gone", total: null },
-  { id:"french", name:"French expressions used in English", badge:"nouveau", desc:"Name a French expression used in English — no accents needed", total: FRENCH.list.size },
+  // ── BEGINNER ─────────────────────────────────────────────────────────────
+  { id:"planets", level:"beginner", name:"Planets of the solar system", desc:"Name all 8 planets", total:8,
+    list:new Set(["mercury","venus","earth","mars","jupiter","saturn","uranus","neptune"]),
+    flavors:{"mercury":"The fastest planet — a year lasts only 88 Earth days.","venus":"The hottest planet, despite not being closest to the Sun.","earth":"The only known planet with life, oceans, and good coffee.","mars":"Has the largest volcano in the solar system: Olympus Mons.","jupiter":"Its Great Red Spot is a storm that has lasted over 350 years.","saturn":"Its rings are made mostly of ice and rock, and are only about 10 meters thick.","uranus":"Rotates on its side — its axis is tilted 98 degrees.","neptune":"Was predicted mathematically before it was observed through a telescope."}},
+  { id:"cardinal", level:"beginner", name:"Cardinal directions", desc:"Name all 4 cardinal directions", total:4,
+    list:new Set(["north","south","east","west"]),
+    flavors:{}},
+  { id:"oceans", level:"beginner", name:"Oceans of the world", desc:"Name all 5 oceans", total:5,
+    list:new Set(["pacific","atlantic","indian","arctic","southern","antarctic"]),
+    tips:{"southern":"Recognized as the 5th ocean by the IHO in 2000 — also accepted as 'Antarctic'."},
+    flavors:{"pacific":"The largest ocean — covers more area than all land on Earth combined.","atlantic":"The youngest of the major oceans, still widening by about 2.5cm per year.","indian":"The warmest ocean in the world.","arctic":"The shallowest and smallest ocean.","southern":"Officially recognized as the 5th ocean in 2000. Also called the Antarctic Ocean."}},
+  { id:"continents", level:"beginner", name:"Continents of the world", desc:"Name all 7 continents", total:7,
+    list:new Set(["africa","antarctica","asia","australia","oceania","europe","north america","south america"]),
+    tips:{"oceania":"Also accepted — some models use Oceania instead of Australia as the continent name."},
+    flavors:{"antarctica":"The coldest, driest, and windiest continent. No permanent human population.","australia":"The smallest continent and the largest country on it share the same name."}},
+  { id:"galilean", level:"beginner", name:"Galilean moons of Jupiter", desc:"Name the 4 large moons Galileo discovered in 1610", total:4,
+    list:new Set(["io","europa","ganymede","callisto"]),
+    flavors:{"io":"The most volcanically active body in the solar system.","europa":"Has a subsurface ocean that may harbor life.","ganymede":"The largest moon in the solar system — bigger than Mercury.","callisto":"The most heavily cratered object in the solar system."}},
+  { id:"earear", level:"beginner", name:"Bones of the human ear", desc:"Name the 3 tiny bones of the middle ear", total:3,
+    list:new Set(["malleus","incus","stapes","hammer","anvil","stirrup"]),
+    tips:{"hammer":"Malleus is also accepted.","anvil":"Incus is also accepted.","stirrup":"Stapes is also accepted — the smallest bone in the human body."},
+    flavors:{"stapes":"The stapes (stirrup) is the smallest bone in the human body — about 3mm long.","malleus":"Named for its hammer shape; transmits vibrations from the eardrum."}},
+  { id:"cowstomachs", level:"beginner", name:"Stomachs of a cow", desc:"Name the 4 compartments of a cow's stomach", total:4,
+    list:new Set(["rumen","reticulum","omasum","abomasum"]),
+    flavors:{"rumen":"The largest compartment — where fermentation happens. Can hold up to 95 liters.","abomasum":"The 'true stomach' — equivalent to a human stomach.","reticulum":"Also called the honeycomb stomach for its texture.","omasum":"Also called the bible or psalterium for its many folds."}},
+  { id:"spicegirls", level:"beginner", name:"The Spice Girls", desc:"Name all 5 Spice Girls (stage names or real names accepted)", total:5,
+    list:new Set(["scary spice","sporty spice","baby spice","ginger spice","posh spice","mel b","melanie brown","mel c","melanie chisholm","emma bunton","geri halliwell","geri horner","victoria beckham","victoria adams"]),
+    flavors:{"victoria beckham":"Posh Spice became arguably more famous after the band than during it.","geri halliwell":"Left the group in 1998 — the most dramatic Spice exit."}},
+  { id:"sins", level:"beginner", name:"The seven deadly sins", desc:"Name all 7", total:7,
+    list:new Set(["pride","greed","lust","envy","gluttony","wrath","sloth"]),
+    flavors:{"sloth":"The only sin that's also an animal — and the animal was named after the sin.","pride":"Considered the original and most serious of the seven.","wrath":"The only sin that can be directed entirely outward rather than inward."}},
+  { id:"spectrum", level:"beginner", name:"Colors of the visible spectrum", desc:"Name all 7 colors of the rainbow", total:7,
+    list:new Set(["red","orange","yellow","green","blue","indigo","violet"]),
+    tips:{"indigo":"Newton added indigo to make 7 colors — many physicists think it shouldn't be there."},
+    flavors:{"indigo":"Newton insisted on 7 colors to match the 7 notes of the musical scale. Indigo is his most controversial choice."}},
+  { id:"macronutrients", level:"beginner", name:"Macronutrients", desc:"Name the 3 macronutrients", total:3,
+    list:new Set(["protein","proteins","carbohydrates","carbs","fats","fat","lipids"]),
+    tips:{"carbs":"Carbohydrates also accepted.","proteins":"Protein also accepted.","lipids":"Fats also accepted."},
+    flavors:{}},
+  { id:"months30", level:"beginner", name:"Months with 30 days", desc:"Name the 4 months that have exactly 30 days", total:4,
+    list:new Set(["april","june","september","november"]),
+    flavors:{"february":"February has 28 or 29 — the famous exception that everyone tries."}},
+  { id:"romance", level:"beginner", name:"Most widely spoken Romance languages", desc:"Name the 5 major Romance languages", total:5,
+    list:new Set(["spanish","french","portuguese","italian","romanian"]),
+    flavors:{"romanian":"The easternmost Romance language — a linguistic island surrounded by Slavic languages.","portuguese":"The only Romance language more spoken outside its origin country than inside."}},
+  { id:"germanic", level:"beginner", name:"Most widely spoken Germanic languages", desc:"Name 5 major Germanic languages", total:5,
+    list:new Set(["english","german","dutch","swedish","norwegian","danish","afrikaans","yiddish"]),
+    tips:{"afrikaans":"Valid — a Germanic language spoken in South Africa, derived from Dutch.","yiddish":"Valid — a Germanic language with Hebrew and Slavic influences."},
+    flavors:{"english":"The most widely spoken Germanic language — and arguably the most borrowed-from language in history.","afrikaans":"Developed from 17th-century Dutch settlers in South Africa."}},
+  { id:"greekprefixes", level:"beginner", name:"Greek numerical prefixes 1–10", desc:"Name the 10 Greek numerical prefixes (mono, di...)", total:10,
+    list:new Set(["mono","di","tri","tetra","penta","hexa","hepta","octa","ennea","deca"]),
+    flavors:{"ennea":"The least remembered — ennea (9). Appears in 'enneagram'.","mono":"From monos, alone. Appears in monologue, monotone, monopoly.","deca":"From deka, ten. Appears in decade, decathlon, decimal."}},
+  { id:"wonders", level:"beginner", name:"Seven Wonders of the Ancient World", desc:"Name all 7 Wonders of the Ancient World", total:7,
+    list:new Set(["great pyramid of giza","pyramid of giza","great pyramid","hanging gardens of babylon","hanging gardens","statue of zeus at olympia","statue of zeus","temple of artemis at ephesus","temple of artemis","mausoleum at halicarnassus","mausoleum of halicarnassus","mausoleum","colossus of rhodes","lighthouse of alexandria","pharos of alexandria"]),
+    flavors:{"great pyramid of giza":"The only Wonder still standing today.","hanging gardens of babylon":"May never have existed — no Babylonian texts mention them. Possibly located in Nineveh.","colossus of rhodes":"Stood for only 54 years before an earthquake toppled it in 226 BC."}},
+  { id:"muses", level:"beginner", name:"The Nine Muses", desc:"Name the 9 Muses of Greek mythology", total:9,
+    list:new Set(["calliope","clio","erato","euterpe","melpomene","polyhymnia","terpsichore","thalia","urania"]),
+    flavors:{"calliope":"Muse of epic poetry — considered the most important. Homer invoked her at the start of the Iliad.","terpsichore":"Muse of dance — her name lives on in 'terpsichorean.'","urania":"Muse of astronomy — the most scientific of the nine.","thalia":"Muse of comedy — her name means 'to flourish.'"}},
+  { id:"heracles", level:"beginner", name:"The 12 Labours of Heracles", desc:"Name any of the 12 Labours of Heracles (Hercules)", total:12,
+    list:new Set(["nemean lion","lernean hydra","lernaean hydra","ceryneian hind","erymanthian boar","augean stables","stymphalian birds","cretan bull","mares of diomedes","girdle of hippolyta","cattle of geryon","apples of the hesperides","cerberus"]),
+    flavors:{"nemean lion":"The first labour — its skin was impervious to weapons, so Heracles strangled it.","lernean hydra":"Cut off one head and two grew back — Heracles had Iolaus cauterize each stump.","augean stables":"3,000 cattle, 30 years of dung, cleaned in one day by rerouting two rivers.","cerberus":"The final labour — retrieving the three-headed guard dog of the Underworld."}},
+  { id:"columns", level:"beginner", name:"Classical Greek column orders", desc:"Name the 3 Greek orders of architecture", total:3,
+    list:new Set(["doric","ionic","corinthian"]),
+    flavors:{"doric":"The oldest and simplest — no base, plain capital. The Parthenon is Doric.","ionic":"Recognizable by its scroll-shaped volutes. More slender than Doric.","corinthian":"The most ornate — decorated with acanthus leaves. Favored by the Romans."}},
+  { id:"accentotypes", level:"beginner", name:"Spanish words by stress position", desc:"Name the 4 types of Spanish words by accent position (aguda, llana...)", total:4,
+    list:new Set(["aguda","llana","grave","esdrujula","esdrújula","sobreesdrujula","sobreesdrújula"]),
+    tips:{"grave":"Llana/grave both accepted.","llana":"Also called 'grave'."},
+    flavors:{"sobreesdrujula":"The rarest type — stress on the fourth-to-last syllable or earlier. Usually verb+pronoun combinations."}},
+  // ── NORMAL ───────────────────────────────────────────────────────────────
+  { id:"capitals", level:"normal", name:"World capitals", desc:"Name any capital city in the world — some countries have more than one!", total:195,
+    list:new Set(["kabul","tirana","algiers","andorra la vella","luanda","buenos aires","yerevan","canberra","vienna","baku","nassau","manama","dhaka","bridgetown","minsk","brussels","belmopan","porto-novo","thimphu","sucre","la paz","sarajevo","gaborone","brasilia","bandar seri begawan","sofia","ouagadougou","naypyidaw","bujumbura","phnom penh","yaounde","ottawa","praia","bangui","ndjamena","santiago","beijing","bogota","moroni","kinshasa","brazzaville","san jose","zagreb","havana","nicosia","prague","copenhagen","djibouti","roseau","santo domingo","dili","quito","cairo","san salvador","malabo","asmara","tallinn","mbabane","lobamba","addis ababa","suva","helsinki","paris","libreville","banjul","tbilisi","berlin","accra","athens","nuuk","st georges","guatemala city","conakry","bissau","georgetown","port au prince","tegucigalpa","budapest","reykjavik","new delhi","jakarta","tehran","baghdad","dublin","jerusalem","rome","kingston","tokyo","amman","astana","nairobi","tarawa","pyongyang","seoul","pristina","kuwait city","bishkek","vientiane","riga","beirut","maseru","monrovia","tripoli","vaduz","vilnius","luxembourg","skopje","antananarivo","lilongwe","kuala lumpur","putrajaya","male","bamako","valletta","majuro","nouakchott","port louis","mexico city","palikir","chisinau","monaco","ulaanbaatar","ulan bator","podgorica","rabat","maputo","windhoek","kathmandu","amsterdam","the hague","wellington","managua","niamey","abuja","oslo","muscat","islamabad","ngerulmud","panama city","port moresby","asuncion","lima","manila","warsaw","lisbon","bucharest","moscow","kigali","basseterre","castries","kingstown","apia","san marino","sao tome","riyadh","dakar","belgrade","victoria","freetown","singapore","bratislava","ljubljana","honiara","mogadishu","pretoria","cape town","bloemfontein","juba","madrid","colombo","sri jayawardenepura kotte","khartoum","paramaribo","stockholm","bern","damascus","taipei","dushanbe","dodoma","dar es salaam","bangkok","lome","nukualofa","port of spain","tunis","ankara","ashgabat","funafuti","kampala","kyiv","abu dhabi","london","washington dc","washington","montevideo","tashkent","port vila","vatican city","caracas","hanoi","sanaa","lusaka","harare","yamoussoukro","abidjan"]),
+    tips:{"washington":"Washington D.C. — the D.C. stands for District of Columbia, not a state.","ulan bator":"Ulaanbaatar is the modern spelling; Ulan Bator is the older transliteration.","bloemfontein":"South Africa's judicial capital. Also J.R.R. Tolkien's birthplace.","cape town":"South Africa's legislative capital.","sucre":"Bolivia's constitutional capital; La Paz is the seat of government."}},
+  { id:"southern", level:"normal", name:"Countries entirely in the Southern Hemisphere", desc:"Every part of the country must lie south of the equator.", total:35,
+    list:new Set(["angola","argentina","australia","bolivia","botswana","burundi","chile","comoros","eswatini","fiji","lesotho","madagascar","malawi","mauritius","mozambique","namibia","new zealand","paraguay","peru","rwanda","seychelles","solomon islands","south africa","tanzania","timor-leste","east timor","tonga","uruguay","vanuatu","zambia","zimbabwe","papua new guinea","samoa","tuvalu","nauru"]),
+    notValid:new Set(["brazil","kenya","indonesia","colombia","ecuador","gabon","cameroon","nigeria","ethiopia","somalia","democratic republic of the congo","congo","india","malaysia","maldives","singapore","philippines","ghana","senegal","guinea","sierra leone","liberia","cote divoire","ivory coast","burkina faso","mali","niger","chad","sudan","south sudan"]),
+    notValidReasons:{"brazil":"Brazil's northernmost tip crosses the equator — so close, yet no.","kenya":"Kenya straddles the equator almost perfectly.","indonesia":"Indonesia spans both hemispheres across thousands of islands.","colombia":"Colombia extends north of the equator.","ecuador":"Ecuador sits right on the equator — its name means exactly that."},
+    flavors:{"nauru":"The world's smallest republic, and the only country with no official capital.","lesotho":"One of only three countries completely surrounded by another — South Africa.","tuvalu":"One of the lowest-lying nations on Earth — climate change threatens its existence."}},
+  { id:"oscars", level:"normal", name:"Best Picture Oscar winners", desc:"Name any Best Picture winner — full title required", total:97,
+    list:new Set(["wings","broadway melody","all quiet on the western front","cimarron","grand hotel","cavalcade","it happened one night","mutiny on the bounty","great ziegfeld","life of emile zola","you cant take it with you","gone with the wind","rebecca","how green was my valley","mrs miniver","casablanca","going my way","lost weekend","best years of our lives","gentlemens agreement","hamlet","all the kings men","all about eve","american in paris","greatest show on earth","from here to eternity","on the waterfront","marty","around the world in 80 days","bridge on the river kwai","gigi","ben-hur","apartment","west side story","lawrence of arabia","tom jones","my fair lady","sound of music","man for all seasons","in the heat of the night","oliver","midnight cowboy","patton","french connection","godfather","sting","godfather part ii","one flew over the cuckoos nest","rocky","annie hall","deer hunter","kramer vs kramer","ordinary people","chariots of fire","gandhi","terms of endearment","amadeus","out of africa","platoon","last emperor","rain man","driving miss daisy","dances with wolves","silence of the lambs","unforgiven","schindlers list","forrest gump","braveheart","english patient","titanic","shakespeare in love","american beauty","gladiator","beautiful mind","chicago","lord of the rings the return of the king","million dollar baby","crash","departed","no country for old men","slumdog millionaire","hurt locker","kings speech","artist","argo","12 years a slave","birdman","spotlight","moonlight","shape of water","green book","parasite","nomadland","coda","everything everywhere all at once","zone of interest","oppenheimer","anora"]),
+    flavors:{"casablanca":"Shot almost entirely on a studio lot in Burbank. Bergman never knew which man her character would choose.","parasite":"First non-English film to win. Bong Joon-ho: 'Once you overcome the one-inch barrier of subtitles...'","moonlight":"Announced after La La Land had already begun its acceptance speech.","annie hall":"Beat Star Wars in 1977. The universe has never fully recovered.","everything everywhere all at once":"Made for $14.3 million. Won seven Oscars."}},
+  { id:"primes", level:"normal", name:"Prime numbers up to 100", desc:"Name any prime between 2 and 97", total:25,
+    list:new Set(["2","3","5","7","11","13","17","19","23","29","31","37","41","43","47","53","59","61","67","71","73","79","83","89","97"]),
+    flavors:{"2":"The only even prime.","97":"The largest prime under 100.","47":"Appears in almost every episode of Star Trek: TNG — a running writers' joke that became tradition.","89":"A Fibonacci prime."}},
+  { id:"defunct", level:"normal", name:"Countries that no longer exist", desc:"Name a country that was once sovereign but is now gone", total:null,
+    facts:{"soviet union":"Dissolved in 1991 into 15 independent republics.","ussr":"Dissolved in 1991 into 15 independent republics.","yugoslavia":"Broke apart 1991–1992 into Slovenia, Croatia, Bosnia, Serbia, Montenegro, North Macedonia, and later Kosovo.","czechoslovakia":"Peacefully split in 1993 — the Velvet Divorce.","east germany":"Reunified with West Germany in 1990.","west germany":"Reunified with East Germany in 1990.","ottoman empire":"Collapsed after WWI, giving rise to modern Turkey and many Middle Eastern states.","austro-hungarian empire":"Dissolved after WWI into Austria, Hungary, Czechoslovakia, Yugoslavia and more.","austria-hungary":"Dissolved after WWI.","persian empire":"Conquered by Alexander the Great in 330 BC.","byzantine empire":"Fell in 1453 when Constantinople was taken by the Ottomans.","eastern roman empire":"The Byzantine Empire; fell in 1453.","roman empire":"Fell in 476 AD in the West; the Eastern half survived as Byzantium until 1453.","holy roman empire":"Dissolved in 1806. Voltaire: 'neither holy, nor Roman, nor an empire.'","prussia":"Abolished by the Allied Control Council in 1947.","south vietnam":"Fell to North Vietnam in 1975.","north vietnam":"Unified with South Vietnam in 1975.","south yemen":"Unified with North Yemen in 1990.","confederate states of america":"Defeated in the US Civil War, 1865.","confederacy":"Defeated in the US Civil War, 1865.","ceylon":"Renamed Sri Lanka in 1972.","rhodesia":"Became Zimbabwe in 1980.","gold coast":"Became Ghana in 1957 — the first sub-Saharan country to gain independence.","abyssinia":"Renamed Ethiopia; Italian occupation 1936–1941.","persia":"Renamed Iran in 1935 by Reza Shah Pahlavi.","mesopotamia":"Now modern Iraq. Cradle of writing, law, and the wheel.","gran colombia":"Bolívar's republic dissolved in 1831 into Colombia, Venezuela, and Ecuador.","republic of texas":"Independent 1836–1846, then annexed by the US.","burma":"Renamed Myanmar in 1989.","belgian congo":"Became the DRC in 1960.","biafra":"Attempted secession from Nigeria 1967–1970.","manchuria":"Puppet state Manchukuo dissolved 1945.","manchukuo":"Japanese puppet state; dissolved 1945.","tanganyika":"Merged with Zanzibar in 1964 to form Tanzania.","zanzibar":"Merged with Tanganyika in 1964 to form Tanzania.","nyasaland":"Became Malawi in 1964.","northern rhodesia":"Became Zambia in 1964.","bechuanaland":"Became Botswana in 1966.","basutoland":"Became Lesotho in 1966.","dahomey":"Renamed Benin in 1975.","upper volta":"Renamed Burkina Faso in 1984 — 'Land of Incorruptible People.'","sikkim":"Merged with India in 1975.","sumer":"First known writing system emerged here around 3200 BC.","akkad":"First empire in history; collapsed around 2154 BC.","babylon":"Fell to Cyrus the Great in 539 BC.","assyria":"Fell in 612 BC when Nineveh was sacked.","carthage":"Destroyed by Rome in 146 BC. Carthago delenda est.","phoenicia":"Gave the world the alphabet; absorbed by Alexander in 332 BC.","dutch east indies":"Became Indonesia in 1945.","french indochina":"Dissolved into Vietnam, Laos, and Cambodia in 1954.","tannu tuva":"Absorbed into the USSR in 1944. Feynman was obsessed with visiting it.","republic of china":"Retreated to Taiwan in 1949.","weimar republic":"Ended when Hitler became chancellor in 1933.","nazi germany":"Collapsed May 1945.","third reich":"Collapsed May 1945.","mughal empire":"Formally ended by the British in 1858.","british raj":"Ended with Indian independence in 1947.","republic of venice":"Absorbed by Napoleon in 1797 after 1,000 years.","papal states":"Ended when Rome was annexed by Italy in 1870.","kingdom of hawaii":"Overthrown 1893; became a US state in 1959.","mali empire":"Mansa Musa was so wealthy his pilgrimage to Mecca crashed gold markets across the Mediterranean.","mongol empire":"The largest contiguous land empire in history — 24 million km².","german empire":"Ended with WWI defeat in 1918.","lydia":"Possibly the first civilization to use coined money.","bophuthatswana":"Apartheid Bantustan; reintegrated 1994.","transkei":"Apartheid Bantustan; reintegrated 1994."}},
+  { id:"french", level:"normal", name:"French expressions used in English", desc:"Name a French expression used in English — no accents needed", total:90,
+    list:new Set(["a propos","agent provocateur","aide de camp","ancien regime","art nouveau","au fait","au gratin","au pair","avant garde","beau monde","beaux arts","bete noire","bien pensant","blase","bon mot","bon vivant","boulevard","bouquet","boutique","brunette","cachet","carte blanche","cause celebre","chaise longue","chef doeuvre","chic","cinema verite","cliche","comme ci comme ca","connoisseur","cordon bleu","coup detat","coup de grace","cuisine","debacle","debut","decollete","deja vu","denouement","detente","double entendre","elite","emigre","en masse","en passant","en route","encore","entrepreneur","esprit de corps","etiquette","facade","fait accompli","faux ami","faux pas","femme fatale","fiance","filet mignon","film noir","fin de siecle","force majeure","genre","gourmet","haute couture","haute cuisine","hors doeuvre","hors doeuvres","hors de combat","idee fixe","impasse","je ne sais quoi","joie de vivre","laissez faire","liaison","lingerie","macabre","malaise","melee","menage a trois","milieu","mise en scene","mot juste","naive","noblesse oblige","nom de plume","nonchalance","nonchalant","nouveau riche","nouvelle vague","objet dart","papier mache","par excellence","passe","petite bourgeoisie","piece de resistance","plateau","pot pourri","pret a porter","prestige","protege","raison detre","renaissance","repertoire","resume","revue","roman a clef","ruse","sabotage","sang froid","savoir faire","silhouette","soiree","souvenir","sous chef","surveillance","tableau vivant","tete a tete","touche","tour de force","trompe loeil","vignette","vis a vis","voila"]),
+    easter:new Set(["cest la vie","tant pis","tant mieux","au contraire","nest ce pas","au fond"]),
+    flavors:{"avant garde":"Originally a military term — the troops sent ahead of the main army. Art borrowed it around 1910.","cliche":"From the sound of a printing press stamp. The word is a fossil of industrial reproduction.","deja vu":"'Already seen.' Coined by philosopher Émile Boirac in 1876.","double entendre":"Ironically, this exact phrase doesn't exist in modern French.","film noir":"Invented by French critics watching American crime films in the 1940s. Americans didn't name their own genre.","je ne sais quoi":"The untranslatable quality. The phrase is its own example.","sabotage":"Workers allegedly threw their wooden shoes (sabots) into machinery during labor disputes.","silhouette":"Named after Étienne de Silhouette, a notoriously cheap French minister. His portraits were cut from black paper to save money.","mali empire":"Mansa Musa was so wealthy his pilgrimage crashed Mediterranean gold markets for a decade.","nonchalant":"From chaloir, to be concerned. Non-chalant: literally 'not warmed.'","prestige":"Originally meant illusion or juggler's trick. Now means aura of success. The word knows something."}},
+  { id:"landlocked", level:"normal", name:"Landlocked countries", desc:"Name any country with no coastline", total:44,
+    list:new Set(["afghanistan","andorra","armenia","austria","azerbaijan","belarus","bhutan","bolivia","botswana","burkina faso","burundi","central african republic","chad","czech republic","czechia","ethiopia","hungary","kazakhstan","kosovo","kyrgyzstan","laos","lesotho","liechtenstein","luxembourg","malawi","mali","moldova","mongolia","nepal","niger","north macedonia","paraguay","rwanda","san marino","serbia","slovakia","south sudan","swaziland","eswatini","switzerland","tajikistan","turkmenistan","uganda","uzbekistan","vatican city","zambia","zimbabwe"]),
+    flavors:{"liechtenstein":"One of only two doubly landlocked countries — surrounded entirely by other landlocked countries.","uzbekistan":"The other doubly landlocked country — also surrounded only by landlocked nations.","bolivia":"Lost its coastline to Chile in the War of the Pacific (1879–1884). Still has a navy — on Lake Titicaca.","lesotho":"Completely surrounded by South Africa.","vatican city":"The world's smallest internationally recognized country — and landlocked within Rome."}},
+  { id:"latin", level:"normal", name:"Latin expressions used in English", desc:"Name a Latin expression still used in English", total:60,
+    list:new Set(["ad hoc","ad hominem","ad infinitum","ad nauseam","alma mater","alter ego","ante meridiem","bona fide","carpe diem","carte blanche","caveat emptor","cogito ergo sum","corpus delicti","cum laude","de facto","de jure","erratum","et al","et cetera","ex libris","ex nihilo","ex post facto","habeas corpus","homo sapiens","honoris causa","id est","in absentia","in loco parentis","in memoriam","in situ","in vitro","in vivo","ipso facto","mea culpa","mens rea","modus operandi","modus vivendi","non sequitur","nota bene","per annum","per capita","per diem","per se","persona non grata","post meridiem","post mortem","prima facie","pro bono","pro forma","quid pro quo","quod erat demonstrandum","qed","requiescat in pace","rip","sine qua non","status quo","subpoena","sui generis","summa cum laude","tabula rasa","terra firma","terra incognita","veni vidi vici","verbatim","vice versa","vox populi"]),
+    flavors:{"carpe diem":"From Horace's Odes — 'pluck the day.' The full quote: 'carpe diem, quam minimum credula postero' — seize the day, trusting as little as possible in tomorrow.","cogito ergo sum":"Descartes' most famous line — 'I think therefore I am.' The foundation of modern Western philosophy.","habeas corpus":"'You shall have the body' — the legal right requiring a person under arrest to be brought before a judge.","mea culpa":"'Through my fault' — from the Catholic confessional prayer. Now used for any public admission of guilt.","quid pro quo":"'Something for something' — a favor exchanged for a favor.","sine qua non":"'Without which not' — the indispensable condition.","tabula rasa":"'Blank slate' — Locke's idea that the mind at birth is blank, shaped entirely by experience.","veni vidi vici":"Caesar's dispatch after the Battle of Zela, 47 BC. Three words, three tenses, one empire."}},
+  { id:"euphemisms", level:"normal", name:"Euphemisms for death in English", desc:"Name an English euphemism for dying or death", total:40,
+    list:new Set(["pass away","passed away","pass on","passed on","kick the bucket","bite the dust","meet your maker","buy the farm","six feet under","push up daisies","pushing up daisies","go to a better place","breathe your last","give up the ghost","cash in your chips","check out","cross the rainbow bridge","depart","expire","go gentle","join the choir invisible","kick it","leave this world","lose your life","meet your end","no longer with us","peg out","perish","pop your clogs","rest in peace","rip","shuffle off this mortal coil","sleep with the fishes","snuff it","succumb","take your last breath","the big sleep","turn up your toes","go the way of all flesh","croak"]),
+    flavors:{"shuffle off this mortal coil":"Shakespeare, Hamlet — 'To die, to sleep / To sleep, perchance to dream...'","kick the bucket":"Possibly from the Old French 'buquet' (a balance or trebuchet) — not the container.","join the choir invisible":"From George Eliot's poem — one of the most literary euphemisms in English.","buy the farm":"US military slang — when a pilot crashed, the government paid damages to the farmer whose land was destroyed.","six feet under":"The standard grave depth in England since the Great Plague of 1665."}},
 ]
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let currentCat = null, usados = new Set(), puntos = 0
 
-// ─── NORMALIZE ───────────────────────────────────────────────────────────────
 function norm(str){
-  return str.toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-    .replace(/^the\s+/,"")
-    .replace(/[^a-z0-9\s]/g,"")
-    .replace(/\s+/g," ").trim()
+  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/^the\s+/,"").replace(/[^a-z0-9\s]/g,"").replace(/\s+/g," ").trim()
 }
 
-// ─── BUILD GRID ───────────────────────────────────────────────────────────────
 function buildGrid(){
   const grid = document.getElementById("cat-grid")
-  CATEGORIES.forEach(cat => {
-    const btn = document.createElement("button")
-    btn.className = "cat-btn"
-    const badge = cat.badge ? `<span class="badge">${cat.badge}</span>` : ""
-    const count = cat.total ? `<span class="cat-count">${cat.total} answers</span>` : `<span class="cat-count">open</span>`
-    btn.innerHTML = `${cat.name}<span class="cat-meta">${count}${badge}</span>`
-    btn.onclick = () => startGame(cat)
-    grid.appendChild(btn)
-  })
+  const beginners = CATEGORIES.filter(c => c.level === "beginner")
+  const normals = CATEGORIES.filter(c => c.level === "normal")
+
+  const h1 = document.createElement("p")
+  h1.className = "level-header"; h1.innerText = "Beginner"
+  grid.appendChild(h1)
+  beginners.forEach(cat => grid.appendChild(makeBtn(cat)))
+
+  const h2 = document.createElement("p")
+  h2.className = "level-header"; h2.innerText = "Normal"
+  grid.appendChild(h2)
+  normals.forEach(cat => grid.appendChild(makeBtn(cat)))
+}
+
+function makeBtn(cat){
+  const btn = document.createElement("button")
+  btn.className = "cat-btn" + (cat.level === "beginner" ? " beginner" : "")
+  const badge = cat.badge ? `<span class="badge">${cat.badge}</span>` : ""
+  const easyBadge = cat.level === "beginner" ? `<span class="badge badge-easy">starter</span>` : ""
+  const count = cat.total ? `<span class="cat-count">${cat.total}</span>` : `<span class="cat-count">open</span>`
+  btn.innerHTML = `${cat.name}<span class="cat-meta">${count}${easyBadge}${badge}</span>`
+  btn.onclick = () => startGame(cat)
+  return btn
 }
 
 function startGame(cat){
@@ -295,7 +224,7 @@ function startGame(cat){
   document.getElementById("usados-box").classList.add("hidden")
   document.getElementById("used-label").innerText = "Used (0):"
   updateProgress()
-  setRes("Start naming...", "#888", null, null, null)
+  setRes("Start naming...", "#888", null, null)
   document.getElementById("screen-select").classList.add("hidden")
   document.getElementById("screen-game").classList.remove("hidden")
   document.getElementById("resp").value = ""
@@ -310,88 +239,73 @@ function resetGame(){
 function updateProgress(){
   const pl = document.getElementById("progress-line")
   if(currentCat.total){
-    const left = currentCat.total - puntos
-    pl.innerHTML = `<span>${puntos}</span> / ${currentCat.total} — ${left} to go`
+    pl.innerHTML = `<span>${puntos}</span> / ${currentCat.total} — ${currentCat.total - puntos} to go`
   } else {
     pl.innerHTML = `<span>${puntos}</span> found so far`
   }
 }
 
-function setRes(main, color, tip, flavor, wiki){
+function setRes(main, color, flavor, wiki){
   document.getElementById("res").innerText = main
   document.getElementById("res").style.color = color
-  const tip_el = document.getElementById("res-tip")
-  if(tip){ tip_el.innerText = "💡 " + tip; tip_el.style.display = "block" } else { tip_el.style.display = "none" }
-  const fl_el = document.getElementById("res-flavor")
-  if(flavor){ fl_el.innerText = flavor; fl_el.style.display = "block" } else { fl_el.style.display = "none" }
-  document.getElementById("res-sub").style.display = "none"
-  const wiki_el = document.getElementById("res-wiki")
-  if(wiki){ wiki_el.innerHTML = `<a href="${wiki}" target="_blank" rel="noopener">→ Read more on Wikipedia</a>`; wiki_el.style.display = "block" } else { wiki_el.style.display = "none" }
+  const ft = document.getElementById("res-tip")
+  ft.style.display = "none"
+  const fl = document.getElementById("res-flavor")
+  if(flavor){ fl.innerText = flavor; fl.style.display = "block" } else { fl.style.display = "none" }
+  const wk = document.getElementById("res-wiki")
+  if(wiki){ wk.innerHTML = `<a href="${wiki}" target="_blank" rel="noopener">→ Wikipedia</a>`; wk.style.display = "block" } else { wk.style.display = "none" }
 }
 
-// ─── VERIFY ───────────────────────────────────────────────────────────────────
+function showTip(tip){
+  const ft = document.getElementById("res-tip")
+  if(tip){ ft.innerText = "💡 " + tip; ft.style.display = "block" }
+}
+
 function verificar(){
   const input = document.getElementById("resp").value.trim()
   if(!input) return
   const n = norm(input)
   if(!n) return
-  if(usados.has(n)){ setRes("Already used that one!", "#d97706", null, null, null); return }
+  if(usados.has(n)){ setRes("Already used that one!", "#d97706", null, null); return }
 
-  if(currentCat.id === "french"){
-    if(FRENCH.easter.has(n)){
-      setRes("🥚 Easter egg! Valid — but doesn't count toward your score.", "#f59e0b", null, FRENCH.easterFlavors[n] || null, null)
-      addTag(input, true)
-      return
-    }
-    if(FRENCH.list.has(n)){
-      accept(input, n, null, FRENCH.flavors[n] || null, null)
-    } else {
-      setRes("Not on the list — or try without accents.", "#ef4444", null, null, null)
-    }
-    return
+  // French easter eggs
+  if(currentCat.id === "french" && currentCat.easter && currentCat.easter.has(n)){
+    setRes("🥚 Easter egg! Valid — but doesn't count toward your score.", "#f59e0b", null, null)
+    addTag(input, true); return
   }
 
+  // Defunct countries
   if(currentCat.id === "defunct"){
-    const fact = DEFUNCT_FACTS[n]
-    if(fact){ accept(input, n, null, fact, "https://en.wikipedia.org/wiki/" + n.split(" ").map(w=>w[0].toUpperCase()+w.slice(1)).join("_")) }
-    else { setRes("Not recognized — try another name or spelling.", "#ef4444", null, null, null) }
+    const fact = currentCat.facts[n]
+    if(fact){ accept(input, n, fact, "https://en.wikipedia.org/wiki/" + toWikiTitle(n)) }
+    else { setRes("Not recognized — try another name or spelling.", "#ef4444", null, null) }
     return
   }
 
-  if(currentCat.id === "southern"){
-    if(SOUTHERN_NO.has(n)){
-      setRes("Not entirely southern!", "#ef4444", SOUTHERN_REASONS[n] || "Part of this country lies in or above the Northern Hemisphere.", null, null)
-      return
-    }
-    if(SOUTHERN_LIST.has(n)){ accept(input, n, null, SOUTHERN_FLAVORS[n] || null, null); return }
-    setRes("Not found. Check spelling.", "#ef4444", null, null, null)
+  // Southern hemisphere no-list
+  if(currentCat.id === "southern" && currentCat.notValid && currentCat.notValid.has(n)){
+    const r = currentCat.notValidReasons && currentCat.notValidReasons[n]
+    setRes("Not entirely southern! " + (r||"Part of this country lies above the equator."), "#ef4444", null, null)
     return
   }
 
-  if(currentCat.id === "capitals"){
-    if(CAPITALS_LIST.has(n)){ accept(input, n, CAPITALS_TIPS[n] || null, null, "https://en.wikipedia.org/wiki/" + n.split(" ").map(w=>w[0].toUpperCase()+w.slice(1)).join("_")); return }
-    setRes("Not found. Check spelling.", "#ef4444", null, null, null)
-    return
-  }
-
-  if(currentCat.id === "oscars"){
-    if(OSCARS_LIST.has(n)){ accept(input, n, null, OSCARS_FLAVORS[n] || null, "https://en.wikipedia.org/wiki/" + n.split(" ").map(w=>w[0].toUpperCase()+w.slice(1)).join("_") + "_(film)"); return }
-    setRes("Not found. Check spelling or try the full title.", "#ef4444", null, null, null)
-    return
-  }
-
-  if(currentCat.id === "primes"){
-    if(PRIMES_LIST.has(n)){ accept(input, n, null, PRIMES_FLAVORS[n] || null, null); return }
-    setRes("Not a prime — or out of range (2–97).", "#ef4444", null, null, null)
-    return
+  if(currentCat.list.has(n)){
+    const tip = currentCat.tips && currentCat.tips[n]
+    const flavor = currentCat.flavors && currentCat.flavors[n]
+    const wiki = (currentCat.id === "capitals" || currentCat.id === "oscars" || currentCat.id === "landlocked")
+      ? "https://en.wikipedia.org/wiki/" + toWikiTitle(n) : null
+    accept(input, n, flavor, wiki)
+    if(tip) showTip(tip)
+  } else {
+    setRes("Not found. Check spelling or try the full name.", "#ef4444", null, null)
   }
 }
 
-function accept(input, n, tip, flavor, wiki){
+function accept(input, n, flavor, wiki){
   usados.add(n); puntos++
   document.getElementById("pts").innerText = puntos
   document.getElementById("resp").value = ""
-  setRes("Valid!", "#4ade80", tip, flavor, wiki)
+  setRes("Valid!", "#4ade80", flavor, wiki)
   updateProgress()
   addTag(input, false)
   document.getElementById("used-label").innerText = "Used (" + puntos + "):"
@@ -404,6 +318,10 @@ function addTag(nombre, isEaster){
   tag.className = "tag" + (isEaster ? " tag-easter" : "")
   tag.innerText = nombre
   document.getElementById("usados").appendChild(tag)
+}
+
+function toWikiTitle(n){
+  return n.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join("_")
 }
 
 buildGrid()
