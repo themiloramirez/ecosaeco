@@ -423,6 +423,22 @@ function makeBtn(cat){
 }
 
 // ─── GAME ─────────────────────────────────────────────────────────────────────
+function setRes(main, color, flavor, wiki){
+  document.getElementById("res").innerText = main
+  document.getElementById("res").style.color = color
+  const tip_el = document.getElementById("res-tip")
+  tip_el.style.display = "none"
+  const fl = document.getElementById("res-flavor")
+  if(flavor){ fl.innerText = flavor; fl.style.display = "block" } else { fl.style.display = "none" }
+  const wk = document.getElementById("res-wiki")
+  if(wiki){ wk.innerHTML = `<a href="${wiki}" target="_blank" rel="noopener">→ Wikipedia</a>`; wk.style.display = "block" } else { wk.style.display = "none" }
+}
+
+function showTip(tip){
+  const ft = document.getElementById("res-tip")
+  if(tip){ ft.innerText = "💡 " + tip; ft.style.display = "block" }
+}
+
 function startGame(cat){
   currentCat = cat
   const prog = loadProgress(cat.id)
